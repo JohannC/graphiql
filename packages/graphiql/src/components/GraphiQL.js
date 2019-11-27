@@ -20,6 +20,7 @@ import { ToolbarSelect, ToolbarSelectOption } from './ToolbarSelect';
 import { QueryEditor } from './QueryEditor';
 import { VariableEditor } from './VariableEditor';
 import { ResultViewer } from './ResultViewer';
+import { TokenProvider } from './TokenProvider';
 import { DocExplorer } from './DocExplorer';
 import { QueryHistory } from './QueryHistory';
 import CodeMirrorSizer from '../utility/CodeMirrorSizer';
@@ -355,6 +356,7 @@ export class GraphiQL extends React.Component {
                 operations={this.state.operations}
               />
               {toolbar}
+              <TokenProvider />
             </div>
             {!this.state.docExplorerOpen && (
               <button
