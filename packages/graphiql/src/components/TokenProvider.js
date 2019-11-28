@@ -22,24 +22,23 @@ export class TokenProvider extends React.Component {
   constructor(props) {
     super(props);
     this.state={
-      addToken: !!props.addToken,
+      addToken: Boolean(props.addToken),
       token: ''
     };
   }
 
   render() {
-    let buttonStyle = {};
+    const buttonStyle = {};
     let tokenInput;
+    const buttonTitle = 'Include Bearer Token';
     if (this.state.addToken){
         buttonStyle.background = 'linear-gradient(rgb(33, 150, 243), rgb(0, 122, 220))';
-        buttonStyle.color = "white";
+        buttonStyle.color = 'white';
         tokenInput = <input type="text" name="token" placeholder="Token" className="form-control" onChange={this.handleChange}/>
     }
     return (
       <div className="toolbar">
-        <button className={'toolbar-button'} style={buttonStyle} onClick={this.handleClick}>
-          Include Bearer Token
-        </button>
+        <button className={'toolbar-button'} style={buttonStyle} onClick={this.handleClick}>{buttonTitle}</button>
         {tokenInput}
       </div>
     );

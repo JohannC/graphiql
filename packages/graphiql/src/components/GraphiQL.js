@@ -358,7 +358,7 @@ export class GraphiQL extends React.Component {
               />
               {toolbar}
               <TokenProvider 
-                addToken={true}
+                addToken
                 onTokenUpdate={this.handleTokenUpdate}
               />
             </div>
@@ -541,8 +541,8 @@ export class GraphiQL extends React.Component {
 
   // Private methods
   _GraphQLAuthServiceFetcher(graphQLParams) {
-    let bearerToken = "Bearer "+this.state.token;
-    return fetch(fetchURL, {
+    const bearerToken = 'Bearer '+this.state.token;
+    return fetch(graphQLParams, {
       method: 'post',
       headers: {
         'Accept': 'application/json',
@@ -551,9 +551,7 @@ export class GraphiQL extends React.Component {
       },
       body: JSON.stringify(graphQLParams),
       credentials: 'include',
-    }).then(function (response) {
-      return response.json();
-    });
+    }).then((response) => response.json());
   }
 
   _fetchSchema() {
@@ -834,9 +832,9 @@ export class GraphiQL extends React.Component {
   handleTokenUpdate = (token) => {
     this.setState({
       ...this.state,
-      token: token
+      token
     });
-  };
+  }
 
   handleCopyQuery = () => {
     const editor = this.getQueryEditor();
