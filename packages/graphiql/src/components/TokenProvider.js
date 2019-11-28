@@ -16,65 +16,43 @@ import PropTypes from 'prop-types';
 export class TokenProvider extends React.Component {
   static propTypes = {
     addToken: PropTypes.bool,
+    onTokenUpdate: PropTypes.func.isRequired
   };
 
   constructor(props) {
     super(props);
-    this.state={addToken: !!props.addToken};
+    this.state={
+      addToken: !!props.addToken,
+      token: ''
+    };
   }
 
   render() {
+    let buttonStyle = {};
     let tokenInput;
-    let switchActionName;
-    if (!this.state.addToken){
-        switchActionName = <div className="switch-action-name">Add Bearer Token</div>
-    } else {
-        switchActionName =<div className="switch-action-name">Token</div>
-        tokenInput = <input type="text" name="token"/>
+    if (this.state.addToken){
+        buttonStyle.background = 'linear-gradient(rgb(33, 150, 243), rgb(0, 122, 220))';
+        buttonStyle.color = "white";
+        tokenInput = <input type="text" name="token" placeholder="Token" className="form-control" onChange={this.handleChange}/>
     }
-
     return (
       <div className="toolbar">
-        <label className="switch">
-          <input type="checkbox" onClick={this._onClick}/>
-          <span className="slider round"></span>
-        </label>
-        {switchActionName}
+        <button className={'toolbar-button'} style={buttonStyle} onClick={this.handleClick}>
+          Include Bearer Token
+        </button>
         {tokenInput}
       </div>
     );
   }
 
-  _onClick = () => {
-    this.setState({addToken: !this.state.addToken})
+  handleClick = () => {
+    this.setState({
+      ...this.state,
+      addToken: !this.state.addToken
+    });
   };
 
-  _onOptionSelected = operation => {
-    this.setState({ optionsOpen: false });
-    this.props.onRun(operation.name && operation.name.value);
-  };
-
-  _onOptionsOpen = downEvent => {
-    let initialPress = true;
-    const downTarget = downEvent.target;
-    this.setState({ highlight: null, optionsOpen: true });
-
-    let onMouseUp = upEvent => {
-      if (initialPress && upEvent.target === downTarget) {
-        initialPress = false;
-      } else {
-        document.removeEventListener('mouseup', onMouseUp);
-        onMouseUp = null;
-        const isOptionsMenuClicked =
-          downTarget.parentNode.compareDocumentPosition(upEvent.target) &
-          Node.DOCUMENT_POSITION_CONTAINED_BY;
-        if (!isOptionsMenuClicked) {
-          // menu calls setState if it was clicked
-          this.setState({ optionsOpen: false });
-        }
-      }
-    };
-
-    document.addEventListener('mouseup', onMouseUp);
+  handleChange = (e) => {
+    this.props.onTokenUpdate(e.target.value);
   };
 }

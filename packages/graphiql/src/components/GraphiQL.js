@@ -146,6 +146,7 @@ export class GraphiQL extends React.Component {
         DEFAULT_DOC_EXPLORER_WIDTH,
       isWaitingForResponse: false,
       subscription: null,
+      token: null,
       ...queryFacts,
     };
 
@@ -356,7 +357,10 @@ export class GraphiQL extends React.Component {
                 operations={this.state.operations}
               />
               {toolbar}
-              <TokenProvider />
+              <TokenProvider 
+                addToken={true}
+                onTokenUpdate={this.handleTokenUpdate}
+              />
             </div>
             {!this.state.docExplorerOpen && (
               <button
@@ -536,12 +540,27 @@ export class GraphiQL extends React.Component {
   }
 
   // Private methods
+  _GraphQLAuthServiceFetcher(graphQLParams) {
+    let bearerToken = "Bearer "+this.state.token;
+    return fetch(fetchURL, {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': bearerToken
+      },
+      body: JSON.stringify(graphQLParams),
+      credentials: 'include',
+    }).then(function (response) {
+      return response.json();
+    });
+  }
 
   _fetchSchema() {
     const fetcher = this.props.fetcher;
 
     const fetch = observableToPromise(
-      fetcher({
+        this._GraphQLAuthServiceFetcher({
         query: introspectionQuery,
         operationName: introspectionQueryName,
       })
@@ -811,6 +830,13 @@ export class GraphiQL extends React.Component {
       return this.props.onEditQuery(value);
     }
   });
+
+  handleTokenUpdate = (token) => {
+    this.setState({
+      ...this.state,
+      token: token
+    });
+  };
 
   handleCopyQuery = () => {
     const editor = this.getQueryEditor();
