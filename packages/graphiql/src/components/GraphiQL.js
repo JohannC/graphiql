@@ -540,27 +540,14 @@ export class GraphiQL extends React.Component {
   }
 
   // Private methods
-  _GraphQLAuthServiceFetcher(graphQLParams) {
-    const bearerToken = 'Bearer '+this.state.token;
-    return fetch(graphQLParams, {
-      method: 'post',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': bearerToken
-      },
-      body: JSON.stringify(graphQLParams),
-      credentials: 'include',
-    }).then((response) => response.json());
-  }
-
   _fetchSchema() {
     const fetcher = this.props.fetcher;
 
     const fetch = observableToPromise(
-        this._GraphQLAuthServiceFetcher({
+        fetcher({
         query: introspectionQuery,
         operationName: introspectionQueryName,
+        bearer: this.state.token
       })
     );
     if (!isPromise(fetch)) {
